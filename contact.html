@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us — Wolf AI Advisory</title>
+<meta name="description" content="Get in touch with Wolf AI Advisory.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="brand">
+      <img src="assets/wolf-ai-red-eyes.png" alt="Wolf AI Advisory logo">
+      <span class="brand-name">Wolf AI Advisory</span>
+    </a>
+    <ul class="sidebar-nav">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="contact.html" class="active">Contact Us</a></li>
+    </ul>
+    <div class="sidebar-footer">&copy; 2026 Wolf AI Advisory</div>
+  </aside>
+
+  <div class="content">
+    <div class="content-inner">
+
+      <section class="hero">
+        <h1>Contact Us</h1>
+        <p class="lede">Tell us a bit about what you're looking for and we'll get back to you shortly.</p>
+      </section>
+
+      <section>
+        <form class="contact-form" id="contact-form">
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-field">
+            <label for="phone">Telephone Number</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+          <div class="form-field">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" placeholder="e.g. Company name / role" required>
+          </div>
+          <div class="form-field full">
+            <label for="subject">Subject</label>
+            <textarea id="subject" name="subject" placeholder="What can we help with?" required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </form>
+        <p class="form-note">Clicking Send opens your email app with this message addressed to us — nothing is sent silently in the background.</p>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var title = document.getElementById('title').value.trim();
+    var subject = document.getElementById('subject').value.trim();
+
+    var mailSubject = 'Wolf_AI Web Inquiry: ' + title;
+    var mailBody =
+      'Name: ' + name + '\n' +
+      'Email: ' + email + '\n' +
+      'Telephone: ' + (phone || 'N/A') + '\n\n' +
+      subject;
+
+    var mailtoLink = 'mailto:vucibatina@hotmail.com'
+      + '?subject=' + encodeURIComponent(mailSubject)
+      + '&body=' + encodeURIComponent(mailBody);
+
+    window.location.href = mailtoLink;
+  });
+</script>
+
+</body>
+</html>
