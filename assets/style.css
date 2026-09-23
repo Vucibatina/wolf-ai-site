@@ -385,6 +385,50 @@ section p.section-lede {
   max-width: 560px;
 }
 
+/* People */
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.person-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.person-card.full {
+  grid-column: 1 / -1;
+}
+
+.person-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+.person-card h3 {
+  margin: 0 0 2px;
+  font-size: 1.05rem;
+}
+
+.person-role {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0 0 14px;
+}
+
+.person-card p.person-bio {
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
 /* Under construction pages */
 .uc-wrap {
   min-height: 70vh;
