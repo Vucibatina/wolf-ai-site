@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube Summary Sample — Wolf AI Advisory</title>
+<link rel="stylesheet" href="assets/style.css?v=10">
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html" class="brand">
+      <img src="assets/wolf-ai-red-eyes.png" alt="Wolf AI Advisory logo">
+      <span class="brand-name">Wolf AI Advisory</span>
+    </a>
+    <ul class="sidebar-nav">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li>
+        <a href="projects.html" class="parent-active">Projects</a>
+        <ul class="sidebar-subnav">
+          <li><a href="project-euro-power-iq.html">Euro Power IQ</a></li>
+          <li><a href="project-echomind-agent.html">EchoMind Agent</a></li>
+          <li><a href="project-youtube-digest-ai.html" class="active">YouTube Digest AI</a></li>
+        </ul>
+      </li>
+      <li><a href="people.html">People</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+    </ul>
+    <div class="sidebar-footer">&copy; 2026 Wolf AI Advisory</div>
+  </aside>
+
+  <div class="content">
+    <div class="content-inner">
+
+      <a href="project-youtube-digest-ai.html" class="back-link">&larr; YouTube Digest AI</a>
+
+      <section class="hero">
+        <p class="eyebrow">YouTube Personal Summarizer &middot; Sample</p>
+        <h1>Your Video Digest</h1>
+        <p class="lede">An example of the summary you receive. Skim the titles, then open only the videos worth your time.</p>
+        <div class="digest-stats" id="digest-stats"></div>
+      </section>
+
+      <div class="digest-toolbar">
+        <button type="button" class="btn btn-outline" id="toggle-all">Expand all</button>
+      </div>
+
+      <div id="digest">
+        <p class="digest-empty">Loading sample&hellip;</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var digest = document.getElementById('digest');
+  var stats = document.getElementById('digest-stats');
+  var toggle = document.getElementById('toggle-all');
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // "Label: text" becomes a bold label followed by the text
+  function point(text) {
+    var m = text.match(/^([^:]{2,45}):(\s+.+|)$/);
+    if (m) return '<strong>' + esc(m[1]) + ':</strong>' + esc(m[2]);
+    return esc(text);
+  }
+
+  function seconds(duration) {
+    var total = 0;
+    duration.replace(/(\d+)\s*([hms])/g, function (_, n, unit) {
+      total += Number(n) * { h: 3600, m: 60, s: 1 }[unit];
+    });
+    return total;
+  }
+
+  function formatTime(total) {
+    var h = Math.floor(total / 3600), m = Math.round((total % 3600) / 60);
+    return h ? h + 'h ' + m + 'm' : m + 'm';
+  }
+
+  function parse(text) {
+    var channels = [], channel, video, group;
+    text.split(/\r?\n/).forEach(function (line) {
+      if (!line.trim()) return;
+      if (line.indexOf('# ') === 0) {
+        channel = { name: line.slice(2).trim(), videos: [] };
+        channels.push(channel);
+      } else if (line.indexOf('## ') === 0) {
+        video = { title: line.slice(3).trim(), meta: [], points: [] };
+        channel.videos.push(video);
+      } else if (/^\s+- /.test(line)) {
+        group.children.push(line.trim().slice(2));
+      } else if (line.indexOf('- ') === 0) {
+        group = { text: line.slice(2).trim(), children: [] };
+        video.points.push(group);
+      } else if (video && !video.points.length) {
+        video.meta = line.split('·').map(function (s) { return s.trim(); });
+      }
+    });
+    return channels;
+  }
+
+  function render(channels) {
+    var videoCount = 0, totalSeconds = 0, html = '';
+
+    channels.forEach(function (ch) {
+      html += '<section class="digest-channel"><h2 class="channel-name">' +
+        '<span class="channel-avatar">' + esc(ch.name.charAt(0).toUpperCase()) + '</span>' +
+        esc(ch.name) + '<span class="channel-count">' + ch.videos.length +
+        (ch.videos.length === 1 ? ' video' : ' videos') + '</span></h2>';
+
+      ch.videos.forEach(function (v) {
+        videoCount++;
+        totalSeconds += seconds(v.meta[1] || '');
+        var date = v.meta[0] ? new Date(v.meta[0] + 'T12:00:00') : null;
+        var dateLabel = date ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+
+        html += '<details class="video-card"><summary>' +
+          '<span class="video-title">' + esc(v.title) + '</span>' +
+          '<span class="video-meta">' +
+            (dateLabel ? '<span>' + esc(dateLabel) + '</span>' : '') +
+            (v.meta[1] ? '<span>' + esc(v.meta[1]) + '</span>' : '') +
+            '<span>' + v.points.length + ' key points</span>' +
+          '</span></summary><ul class="video-points">';
+
+        v.points.forEach(function (p) {
+          html += '<li>' + point(p.text);
+          if (p.children.length) {
+            html += '<ul>' + p.children.map(function (c) { return '<li>' + point(c) + '</li>'; }).join('') + '</ul>';
+          }
+          html += '</li>';
+        });
+
+        html += '</ul>' + (v.meta[2] ? '<p class="video-model">Summarized with ' + esc(v.meta[2]) + '</p>' : '') +
+          '</details>';
+      });
+
+      html += '</section>';
+    });
+
+    digest.innerHTML = html;
+    stats.innerHTML =
+      '<div><strong>' + channels.length + '</strong><span>channels</span></div>' +
+      '<div><strong>' + videoCount + '</strong><span>new videos</span></div>' +
+      '<div><strong>' + formatTime(totalSeconds) + '</strong><span>of watching saved</span></div>';
+  }
+
+  toggle.addEventListener('click', function () {
+    var cards = digest.querySelectorAll('.video-card');
+    var open = toggle.textContent === 'Expand all';
+    cards.forEach(function (c) { c.open = open; });
+    toggle.textContent = open ? 'Collapse all' : 'Expand all';
+  });
+
+  fetch('assets/youtube-sample.txt')
+    .then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.text();
+    })
+    .then(function (text) { render(parse(text)); })
+    .catch(function () {
+      digest.innerHTML = '<p class="digest-empty">The sample could not be loaded. ' +
+        '<a href="assets/youtube-sample.txt">Open the text version</a>.</p>';
+    });
+})();
+</script>
+
+</body>
+</html>
