@@ -953,6 +953,10 @@ section p.section-lede {
   grid-column: 1 / -1;
 }
 
+.person-card p.person-bio + p.person-bio {
+  margin-top: 12px;
+}
+
 .person-photo {
   width: 96px;
   height: 96px;
